@@ -24,7 +24,7 @@ export default function Layout() {
     <div className="min-h-screen flex bg-gray-100">
       {/* Sidebar escritorio */}
       <aside className="hidden md:flex w-64 bg-white shadow-md p-6 flex-col">
-        <h2 className="text-xl font-bold mb-6">Gestor de Tareas</h2>
+        <h2 className="text-xl font-bold mb-6">Nouteam</h2>
         <nav className="space-y-3 flex-1 flex flex-col">
           <Link
             to="/dashboard"
@@ -45,7 +45,7 @@ export default function Layout() {
             onClick={handleLogout}
             className="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
           >
-            Logout
+            Salir
           </button>
         </nav>
       </aside>
@@ -67,7 +67,7 @@ export default function Layout() {
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
-          <h2 className="text-xl font-bold mb-6">Gestor de Tareas</h2>
+          <h2 className="text-xl font-bold mb-6">Nouteam</h2>
           <nav className="space-y-3 flex-1 flex flex-col">
             <Link
               to="/dashboard"
@@ -90,7 +90,7 @@ export default function Layout() {
               onClick={handleLogout}
               className="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
             >
-              Logout
+              Salir
             </button>
           </nav>
         </div>

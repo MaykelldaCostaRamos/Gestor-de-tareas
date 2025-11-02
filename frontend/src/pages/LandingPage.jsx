@@ -12,7 +12,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navbar */}
-      <header className="flex justify-between items-center px-8 py-4 bg-white shadow-md">
+      <header className="flex justify-between items-center px-8  py-4  bg-white shadow-md">
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -43,13 +43,13 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="flex-1 flex flex-col lg:flex-row items-center px-8 lg:px-24 py-12 bg-gray-50">
+      <section className="flex-1 flex flex-col md:flex-row lg:flex-row items-center px-8 lg:px-24 py-12 bg-gray-50">
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="lg:w-1/2 space-y-6"
+          className="md:w-[80%] lg:w-1/2 space-y-6"
         >
           <h2 className="text-4xl font-bold text-gray-800">
             Organiza tus proyectos y tareas de manera eficiente
@@ -73,10 +73,10 @@ export default function LandingPage() {
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 1.0 }}
           viewport={{ once: true }}
-          className="lg:w-1/2 mt-8 lg:mt-0 flex justify-center drop-shadow-md"
+          className="flex justify-center items-center drop-shadow-sm px-1 mt-8 md:mt-0"
         >
-          <div>            
-            <img src={mockup} className="rounded-2xl shadow-xl w-90 h-auto md:w-full contrast-125"/>
+          <div className="">            
+            <img src={mockup} className="md:w-[560px] lg:w-[400px] xl:w-[400px] 2xl:w-[450px] rounded-2xl shadow-xl object-cover contrast-125"/>
           </div>
         </motion.div>
       </section>
