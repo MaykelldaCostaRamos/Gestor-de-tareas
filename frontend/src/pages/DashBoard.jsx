@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { getProjects, createProject, deleteProject, updateProject } from "../api/projectService";
+import Calendar from "../components/Calendar";
 
 export default function Dashboard() {
   const [proyectos, setProyectos] = useState([]);
@@ -10,6 +11,8 @@ export default function Dashboard() {
   const [nuevaDescripcion, setNuevaDescripcion] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [fecha, setFecha] = useState(new Date());
 
   // Cargar proyectos
   const fetchProjects = async () => {
@@ -33,7 +36,7 @@ export default function Dashboard() {
   const handleCrearProyecto = async () => {
     if (!nuevoProyecto.trim()) return;
     try {
-      const { project } = await createProject(nuevoProyecto.trim(), nuevaDescripcion.trim());
+      const { project } = await createProject(nuevoProyecto.trim(), nuevaDescripcion.trim(), fecha);
       setProyectos((prev) => [...prev, project]);
       setNuevoProyecto("");
       setNuevaDescripcion("");
@@ -106,6 +109,9 @@ export default function Dashboard() {
             placeholder="Descripción del proyecto"
             className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1"
           />
+
+          < Calendar value="fecha" onChange={setFecha} />
+
           <button
             onClick={handleCrearProyecto}
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition"
