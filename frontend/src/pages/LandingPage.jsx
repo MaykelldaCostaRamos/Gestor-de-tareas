@@ -6,7 +6,7 @@ import {
   ClockIcon,
   PaperClipIcon
 } from "@heroicons/react/24/outline";
-import mockup from '../assets/mockup-nouteam.png';
+import mockup from '../assets/mockup.jpg';
 
 export default function LandingPage() {
   return (
@@ -75,8 +75,8 @@ export default function LandingPage() {
           viewport={{ once: true }}
           className="flex justify-center items-center drop-shadow-sm px-1 mt-8 md:mt-0"
         >
-          <div className="">            
-            <img src={mockup} className="md:w-[560px] lg:w-[400px] xl:w-[400px] 2xl:w-[450px] rounded-2xl shadow-xl object-cover contrast-125"/>
+          <div className="xl:pl-5">            
+            <img src={mockup} alt="Foto de Mikhail Nilov" className="md:w-[560px] lg:w-[400px] xl:w-[400px] 2xl:w-[620px] rounded-2xl shadow-xl object-cover contrast-125"/>
           </div>
         </motion.div>
       </section>
