@@ -15,14 +15,14 @@ export const getProject = async (projectId) => {
 };
 
 // Crear nuevo proyecto
-export const createProject = async (name, description) => {
-  const response = await api.post("/api/project", { name, description });
+export const createProject = async (name, description, date) => {
+  const response = await api.post("/api/project", { name, description, date});
   return response.data;
 };
 
 // Editar proyecto
-export const updateProject = async (projectId, name, description) => {
-  const response = await api.put(`/api/project/${projectId}`, { name, description });
+export const updateProject = async (projectId, name, description, date) => {
+  const response = await api.put(`/api/project/${projectId}`, { name, description, date });
   return response.data.project;
 };
 

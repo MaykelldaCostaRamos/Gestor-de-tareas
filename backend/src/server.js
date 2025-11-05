@@ -21,19 +21,21 @@ const app = express();
 // ==========================
 connectDB();
 
+
 // ==========================
 // Lista de orígenes permitidos
 // ==========================
 const whitelist = [
-  "https://nouteam.vercel.app"
+  "https://nouteam.vercel.app",
+  "http://localhost:5173"
 ];
 
 // ==========================
-// Middlewares
+// Middleware CORS (válido para local y producción)
 // ==========================
 app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true); // permite Postman o requests desde backend
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // permite Postman o llamadas internas
     if (whitelist.includes(origin)) {
       callback(null, true);
     } else {
@@ -42,6 +44,8 @@ app.use(cors({
   },
   credentials: true
 }));
+
+
 
 app.use(express.json());
 app.use(cookieParser());

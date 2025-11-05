@@ -13,6 +13,7 @@ export const createProject = async (req, res) => {
   try {
     const name = cleanText(req.body.name);
     const description = cleanText(req.body.description);
+    const date = cleanText(req.body.date);
 
     if (!validateName(name)) {
       return res.status(400).json({
@@ -27,7 +28,7 @@ export const createProject = async (req, res) => {
       return res.status(400).json({ success: false, message: "Ya existe un proyecto con este nombre" });
     }
 
-    const newProject = await Project.create({ name, description, ownerId: req.user.userId });
+    const newProject = await Project.create({ name, description, date, ownerId: req.user.userId });
 
     res.status(201).json({ success: true, message: "Proyecto creado con éxito", project: newProject });
   } catch (error) {
@@ -85,6 +86,7 @@ export const updateProject = async (req, res) => {
     const { id } = req.params;
     const name = cleanText(req.body.name);
     const description = cleanText(req.body.description);
+    const date = cleanText(req.body.date);
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ success: false, message: "ID de proyecto inválido" });
@@ -92,7 +94,7 @@ export const updateProject = async (req, res) => {
 
     const project = await Project.findOneAndUpdate(
       { _id: id, ownerId: req.user.userId },
-      { name, description },
+      { name, description, date },
       { new: true }
     );
 
