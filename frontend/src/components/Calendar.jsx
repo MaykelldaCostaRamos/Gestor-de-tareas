@@ -67,10 +67,6 @@ export default function Calendar({ value, onChange }) {
         onChange={handleChange}
         className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
       />
-      
-      <p className="text-xs text-gray-500">
-        La fecha debe ser posterior a la actual
-      </p>
     </div>
   );
 }
