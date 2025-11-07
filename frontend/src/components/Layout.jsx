@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { logoutUser } from "../api/authService";
+import backgroundImage from "../assets/bg-notes.jpg";
 
 export default function Layout() {
   const [open, setOpen] = useState(false);
@@ -28,9 +29,21 @@ export default function Layout() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-100">
+    <div className="relative min-h-screen flex">
+      {/* 🔹 Fondo con blur y degradado sutil */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {/* Imagen difuminada */}
+        <div
+          className="absolute inset-0 bg-center bg-cover bg-no-repeat blur-md scale-105"
+          style={{
+            backgroundImage: `url(${backgroundImage})`,
+          }}
+        ></div>
+
+      </div>
+
       {/* Sidebar escritorio */}
-      <aside className="hidden md:flex w-64 bg-white shadow-md p-6 flex-col space-y-3">
+      <aside className="hidden md:flex w-64 bg-white shadow-md p-6 flex-col space-y-3 relative z-10">
         <h2 className="text-2xl font-bold text-blue-600">
           Nou<span className="font-light">team</span>
         </h2>
@@ -126,7 +139,7 @@ export default function Layout() {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col relative z-10">
         <header className="bg-white shadow-md p-4 flex justify-between items-center md:hidden">
           <h1 className="text-xl font-semibold">{getTitle()}</h1>
           <button onClick={() => setOpen(true)}>

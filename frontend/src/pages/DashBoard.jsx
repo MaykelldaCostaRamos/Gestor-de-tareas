@@ -9,7 +9,7 @@ export default function Dashboard() {
   const [proyectos, setProyectos] = useState([]);
   const [nuevoProyecto, setNuevoProyecto] = useState("");
   const [nuevaDescripcion, setNuevaDescripcion] = useState("");
-  const [date, setDate] = useState(null); // CAMBIO: iniciar en null para calendario vacío
+  const [date, setDate] = useState(null); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -21,7 +21,7 @@ export default function Dashboard() {
   const [editProject, setEditProject] = useState(null);
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
-  const [editDate, setEditDate] = useState(null); // CAMBIO: iniciar en null
+  const [editDate, setEditDate] = useState(null);
 
   // Cargar proyectos
   const fetchProjects = async () => {
@@ -125,7 +125,7 @@ export default function Dashboard() {
       {error && <div className="text-red-500 mb-2">{error}</div>}
 
       {/* Lista de proyectos */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {proyectos.map((project) => (
           <motion.div
             key={project._id}
@@ -139,7 +139,7 @@ export default function Dashboard() {
               )}
               {project.date && (
                 <p className="text-xs text-gray-400 mt-1">
-                  Entrega:{" "}
+                  
                   {new Date(project.date).toLocaleDateString("es-ES", {
                     day: "2-digit",
                     month: "2-digit",

@@ -8,6 +8,7 @@ import {
   deleteTask,
   updateTask,
 } from "../api/projectService";
+import { useParams } from "react-router-dom";
 
 export default function Project() {
   const [proyectos, setProyectos] = useState([]);
@@ -17,6 +18,7 @@ export default function Project() {
   const [nuevaDescripcion, setNuevaDescripcion] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { id } = useParams();
 
   const handleUnauthorized = () => {
     // Token inválido o expirado
@@ -30,9 +32,7 @@ export default function Project() {
     try {
       const data = await getProjects();
       setProyectos(data.projects || []);
-      if (data.projects?.length > 0) {
-        fetchProjectDetails(data.projects[0]._id);
-      }
+
     } catch (err) {
       console.error(err);
       if (err.response?.status === 401) handleUnauthorized();
@@ -65,7 +65,12 @@ export default function Project() {
 
   useEffect(() => {
     fetchProjects();
-  }, []);
+
+    if(id){
+      fetchProjectDetails(id);
+    }
+
+  }, [id]);
 
   const agregarTarea = async () => {
     if (!nuevaTarea.trim() || !proyectoSeleccionado) return;
@@ -135,6 +140,7 @@ export default function Project() {
             onChange={(e) => fetchProjectDetails(e.target.value)}
             className="border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
+            <option value="">Seleccionar proyecto</option>
             {proyectos.map((p) => (
               <option key={p._id} value={p._id}>{p.name}</option>
             ))}
@@ -174,8 +180,8 @@ export default function Project() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
             {tareas.map((tarea) => (
-              <div key={tarea._id} className="p-4 sm:p-5 rounded-2xl shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between transition transform hover:scale-105">
-                <div className="flex flex-col flex-1 mb-2 sm:mb-0">
+              <div key={tarea._id} className="bg-white/90 p-4 rounded-2xl shadow-md flex flex-col items-start justify-between transition transform hover:scale-105">
+                <div className="flex flex-col flex-1 mb-6 ">
                   <div className="flex items-start sm:items-center space-x-3">
                     {tarea.status === "completada" ? (
                       <CheckCircleIcon className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
