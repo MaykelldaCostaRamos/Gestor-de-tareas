@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { registerUser } from "../api/authService";
 import { useNavigate, Link } from "react-router-dom";
 import backgroundImage from "../assets/bg-notes.jpg";
+import Footer from "../components/Footer";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -50,16 +51,25 @@ export default function Register() {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center px-4 py-8 bg-cover bg-center bg-no-repeat"
+      className="min-h-screen flex flex-col bg-cover bg-center bg-no-repeat"
       style={{
         backgroundImage: `url(${backgroundImage})`,
       }}
     >
-      <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg max-w-md w-full">
-        <h1 className="text-3xl font-bold text-blue-600 text-center mb-6">
-          Nou<span className="font-light">team</span>
-        </h1>
 
+      <div className="absolute top-0 px-8 py-4 w-full bg-white shadow-md">
+                <motion.h1
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="text-2xl font-bold text-blue-600 text-center"
+                  >
+                    Nou<span className="font-light">team</span>
+                </motion.h1>   
+      </div>
+
+      <div className="w-full flex flex-1 justify-center items-center">
+        <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg max-w-md w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -88,7 +98,7 @@ export default function Register() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="tucorreo@ejemplo.com"
+                placeholder="Introduce tu correo electrónico"
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
@@ -143,6 +153,9 @@ export default function Register() {
           </div>
         </motion.div>
       </div>
+      </div>
+
+      <Footer />
     </div>
   );
 }
