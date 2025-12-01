@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { loginUser } from "../api/authService";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 import backgroundImage from "../assets/bg-notes.jpg";
 import Footer from "../components/Footer";
 
@@ -10,6 +11,9 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const setToken = useAuthStore((state) => state.setToken);
+  const setUser = useAuthStore((state) => state.setUser);
 
   const validate = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -26,12 +30,19 @@ export default function Login() {
     if (!validate()) return;
 
     try {
-      await loginUser({ email, password });
+      const response = await loginUser({ email, password });
+      const { token, user } = response;
+
+      // Guardar en Zustand
+      setToken(token);
+      setUser(user);
+
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Error al iniciar sesión");
     }
   };
+
 
   return (
     <div

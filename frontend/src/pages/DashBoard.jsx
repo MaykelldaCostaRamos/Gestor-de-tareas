@@ -2,33 +2,35 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { PencilSquareIcon, TrashIcon, XMarkIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
-import { getProjects, createProject, deleteProject, updateProject } from "../api/projectService";
 import Calendar from "../components/Calendar";
+import { getProjects, deleteProject } from "../api/projectService";
+import useProjectModal from "../hooks/useProjectModal";
 
 export default function Dashboard() {
-  const [proyectos, setProyectos] = useState([]);
-  const [nuevoProyecto, setNuevoProyecto] = useState("");
-  const [nuevaDescripcion, setNuevaDescripcion] = useState("");
-  const [date, setDate] = useState(null); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Modal de creación
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  // Usamos el hook para manejar modales y proyectos
+  const {
+    projects,
+    setProjects,
+    formState,
+    setFormState,
+    showCreateModal,
+    showEditModal,
+    openCreateModal,
+    openEditModal,
+    closeModal,
+    handleCreate,
+    handleEdit,
+  } = useProjectModal();
 
-  // Modal de edición
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editProject, setEditProject] = useState(null);
-  const [editName, setEditName] = useState("");
-  const [editDescription, setEditDescription] = useState("");
-  const [editDate, setEditDate] = useState(null);
-
-  // Cargar proyectos
+  // Cargar proyectos desde backend
   const fetchProjects = async () => {
     setLoading(true);
     try {
       const data = await getProjects();
-      setProyectos(data.projects || []);
+      setProjects(data.projects || []);
     } catch (err) {
       console.error(err);
       setError("No se pudieron cargar los proyectos.");
@@ -41,59 +43,11 @@ export default function Dashboard() {
     fetchProjects();
   }, []);
 
-  // Crear nuevo proyecto
-  const handleCrearProyecto = async () => {
-    if (!nuevoProyecto.trim()) return;
-    try {
-      const { project } = await createProject(
-        nuevoProyecto.trim(),
-        nuevaDescripcion.trim(),
-        date
-      );
-      setProyectos((prev) => [...prev, project]);
-      setNuevoProyecto("");
-      setNuevaDescripcion("");
-      setDate(null); // CAMBIO: resetear a null
-      setShowCreateModal(false);
-    } catch (err) {
-      console.error(err);
-      setError("No se pudo crear el proyecto.");
-    }
-  };
-
-  // Abrir modal edición
-  const openEditModal = (project) => {
-    setEditProject(project);
-    setEditName(project.name);
-    setEditDescription(project.description || "");
-    setEditDate(project.date || null); // CAMBIO: usar null si no hay fecha
-    setShowEditModal(true);
-  };
-
-  // Guardar edición
-  const handleGuardarEdicion = async () => {
-    try {
-      const updated = await updateProject(
-        editProject._id,
-        editName.trim(),
-        editDescription.trim(),
-        editDate
-      );
-      setProyectos((prev) =>
-        prev.map((p) => (p._id === editProject._id ? updated : p))
-      );
-      setShowEditModal(false);
-    } catch (err) {
-      console.error(err);
-      setError("No se pudo editar el proyecto.");
-    }
-  };
-
   // Eliminar proyecto
   const handleEliminarProyecto = async (projectId) => {
     try {
       await deleteProject(projectId);
-      setProyectos((prev) => prev.filter((p) => p._id !== projectId));
+      setProjects((prev) => prev.filter((p) => p._id !== projectId));
     } catch (err) {
       console.error(err);
       setError("No se pudo eliminar el proyecto.");
@@ -114,7 +68,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <button
-          onClick={() => setShowCreateModal(true)}
+          onClick={openCreateModal}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl font-semibold transition"
         >
           <PlusCircleIcon className="w-5 h-5" />
@@ -126,7 +80,7 @@ export default function Dashboard() {
 
       {/* Lista de proyectos */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-        {proyectos.map((project) => (
+        {projects.map((project) => (
           <motion.div
             key={project._id}
             whileHover={{ scale: 1.03 }}
@@ -139,7 +93,6 @@ export default function Dashboard() {
               )}
               {project.date && (
                 <p className="text-xs text-gray-400 mt-1">
-                  
                   {new Date(project.date).toLocaleDateString("es-ES", {
                     day: "2-digit",
                     month: "2-digit",
@@ -184,7 +137,7 @@ export default function Dashboard() {
               exit={{ scale: 0.8, opacity: 0 }}
             >
               <button
-                onClick={() => setShowCreateModal(false)}
+                onClick={closeModal}
                 className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
               >
                 <XMarkIcon className="w-6 h-6" />
@@ -194,28 +147,28 @@ export default function Dashboard() {
 
               <input
                 type="text"
-                value={nuevoProyecto}
-                onChange={(e) => setNuevoProyecto(e.target.value)}
+                value={formState.name}
+                onChange={(e) => setFormState({ ...formState, name: e.target.value })}
                 placeholder="Nombre del proyecto"
                 className="w-full px-4 py-2 mb-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
               <textarea
-                value={nuevaDescripcion}
-                onChange={(e) => setNuevaDescripcion(e.target.value)}
+                value={formState.description}
+                onChange={(e) => setFormState({ ...formState, description: e.target.value })}
                 placeholder="Descripción del proyecto"
                 className="w-full px-4 py-2 mb-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
-              <Calendar value={date} onChange={setDate} />
+              <Calendar value={formState.date} onChange={(date) => setFormState({ ...formState, date })} />
 
               <div className="flex justify-end mt-5 space-x-2">
                 <button
-                  onClick={() => setShowCreateModal(false)}
+                  onClick={closeModal}
                   className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
                 >
                   Cancelar
                 </button>
                 <button
-                  onClick={handleCrearProyecto}
+                  onClick={handleCreate}
                   className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition"
                 >
                   Crear Proyecto
@@ -242,7 +195,7 @@ export default function Dashboard() {
               exit={{ scale: 0.8, opacity: 0 }}
             >
               <button
-                onClick={() => setShowEditModal(false)}
+                onClick={closeModal}
                 className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
               >
                 <XMarkIcon className="w-6 h-6" />
@@ -252,26 +205,26 @@ export default function Dashboard() {
 
               <input
                 type="text"
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
+                value={formState.name}
+                onChange={(e) => setFormState({ ...formState, name: e.target.value })}
                 className="w-full px-4 py-2 mb-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
               <textarea
-                value={editDescription}
-                onChange={(e) => setEditDescription(e.target.value)}
+                value={formState.description}
+                onChange={(e) => setFormState({ ...formState, description: e.target.value })}
                 className="w-full px-4 py-2 mb-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
-              <Calendar value={editDate} onChange={setEditDate} />
+              <Calendar value={formState.date} onChange={(date) => setFormState({ ...formState, date })} />
 
               <div className="flex justify-end mt-5 space-x-2">
                 <button
-                  onClick={() => setShowEditModal(false)}
+                  onClick={closeModal}
                   className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
                 >
                   Cancelar
                 </button>
                 <button
-                  onClick={handleGuardarEdicion}
+                  onClick={handleEdit}
                   className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition"
                 >
                   Guardar cambios

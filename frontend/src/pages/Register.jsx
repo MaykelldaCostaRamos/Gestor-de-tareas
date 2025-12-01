@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { registerUser } from "../api/authService";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 import backgroundImage from "../assets/bg-notes.jpg";
 import Footer from "../components/Footer";
 
@@ -12,6 +13,10 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  // Zustand
+  const setToken = useAuthStore((state) => state.setToken);
+  const setUser = useAuthStore((state) => state.setUser);
 
   const validate = () => {
     if (!name.trim()) { setError("El nombre es obligatorio"); return false; }
@@ -42,10 +47,18 @@ export default function Register() {
     if (!validate()) return;
 
     try {
-      await registerUser({ name, email, password });
-      navigate("/login");
+      const response = await registerUser({ name, email, password });
+
+      // Backend devuelve { token, user }
+      const { token, user } = response;
+
+      // Guardar en Zustand
+      setToken(token);
+      setUser(user);
+
+      navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "Error al registrarse");
+      setError(err.response?.data?.message || err.message || "Error al registrarse");
     }
   };
 
@@ -58,101 +71,101 @@ export default function Register() {
     >
 
       <div className="absolute top-0 px-8 py-4 w-full bg-white shadow-md">
-                <motion.h1
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="text-2xl font-bold text-blue-600 text-center"
-                  >
-                    Nou<span className="font-light">team</span>
-                </motion.h1>   
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-2xl font-bold text-blue-600 text-center"
+        >
+          Nou<span className="font-light">team</span>
+        </motion.h1>   
       </div>
 
       <div className="w-full flex flex-1 justify-center items-center">
         <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg max-w-md w-full">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
-            Crea tu cuenta
-          </h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
+              Crea tu cuenta
+            </h2>
 
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-gray-700 mb-1">Nombre</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Tu nombre"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div>
+                <label className="block text-gray-700 mb-1">Nombre</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Tu nombre"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Introduce tu correo electrónico"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-700 mb-1">Contraseña</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="********"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-700 mb-1">Confirmar contraseña</label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="********"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+
+              <button
+                type="submit"
+                className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition transform hover:scale-105"
+              >
+                Registrarse
+              </button>
+            </form>
+
+            <div className="text-center mt-4 text-gray-600 text-sm">
+              <p>
+                ¿Ya tienes cuenta?{" "}
+                <Link to="/login" className="text-blue-600 font-semibold hover:underline">
+                  Inicia sesión
+                </Link>
+              </p>
+              <p>
+                <Link to="/" className="text-blue-600 hover:underline">
+                  Volver a inicio
+                </Link>
+              </p>
             </div>
-
-            <div>
-              <label className="block text-gray-700 mb-1">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Introduce tu correo electrónico"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-700 mb-1">Contraseña</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="********"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-700 mb-1">Confirmar contraseña</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="********"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition transform hover:scale-105"
-            >
-              Registrarse
-            </button>
-          </form>
-
-          <div className="text-center mt-4 text-gray-600 text-sm">
-            <p>
-              ¿Ya tienes cuenta?{" "}
-              <Link to="/login" className="text-blue-600 font-semibold hover:underline">
-                Inicia sesión
-              </Link>
-            </p>
-            <p>
-              <Link to="/" className="text-blue-600 hover:underline">
-                Volver a inicio
-              </Link>
-            </p>
-          </div>
-        </motion.div>
-      </div>
+          </motion.div>
+        </div>
       </div>
 
       <Footer />

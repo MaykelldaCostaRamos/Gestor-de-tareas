@@ -1,4 +1,6 @@
 import User from "../models/User.js";
+import Project from "../models/Project.js";
+import Task from "../models/Task.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -34,7 +36,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// ===== LOGIN =====
+
 // ===== LOGIN =====
 export const loginUser = async (req, res) => {
   try {
@@ -97,5 +99,45 @@ export const getProfile = async (req, res) => {
   } catch (error) {
     console.error("Error en getProfile:", error.message);
     res.status(500).json({ message: "Error interno del servidor" });
+  }
+};
+
+
+// ===== ELIMINAR USUARIO + DATOS RELACIONADOS =====
+export const deleteUser = async (req, res) => {
+  try {
+    console.log("🔹 deleteUser iniciado");
+
+    // Obtener userId del token (verifyToken)
+    const userId = req.user.userId;
+    console.log("UserId a eliminar:", userId);
+
+    // Buscar proyectos del usuario
+    const projects = await Project.find({ owner: userId }).select("_id");
+    console.log("Proyectos encontrados:", projects);
+
+    const projectIds = projects.map((p) => p._id);
+    console.log("IDs de proyectos:", projectIds);
+
+    // Eliminar tareas de esos proyectos
+    const deletedTasks = await Task.deleteMany({ projectId: { $in: projectIds } });
+    console.log("Tareas eliminadas de proyectos:", deletedTasks);
+
+    // Eliminar proyectos
+    const deletedProjects = await Project.deleteMany({ owner: userId });
+    console.log("Proyectos eliminados:", deletedProjects);
+
+    // Eliminar tareas donde aparezca asignado
+    const deletedAssignedTasks = await Task.deleteMany({ assignedTo: userId });
+    console.log("Tareas asignadas eliminadas:", deletedAssignedTasks);
+
+    // Finalmente eliminar al usuario
+    const deletedUser = await User.findByIdAndDelete(userId);
+    console.log("Usuario eliminado:", deletedUser);
+
+    res.json({ message: "Usuario y todos sus datos fueron eliminados." });
+  } catch (error) {
+    console.error("❌ Error al eliminar usuario:", error);
+    res.status(500).json({ message: "Error interno del servidor." });
   }
 };

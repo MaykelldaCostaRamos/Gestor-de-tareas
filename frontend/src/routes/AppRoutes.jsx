@@ -1,11 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Layout from "../components/Layout.jsx";
+import Layout from "../components/layout/Layout.jsx";
 import LandingPage from "../pages/LandingPage.jsx";
 import Login from "../pages/Login.jsx";
 import Register from "../pages/Register.jsx";
 import Dashboard from "../pages/DashBoard.jsx";
 import Project from "../pages/Project.jsx";
 import PrivateRoute from "../components/PrivateRoute.jsx";
+import Settings from "../components/Settings.jsx"
 
 export default function AppRoutes() {
   return (
@@ -22,6 +23,7 @@ export default function AppRoutes() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/project" element={<Project />} />
             <Route path="/project/:id" element={<Project />} />
+            <Route path="/settings" element={<Settings />} />
           </Route>
         </Route>
       </Routes>

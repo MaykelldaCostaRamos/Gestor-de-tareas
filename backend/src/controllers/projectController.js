@@ -118,13 +118,19 @@ export const deleteProject = async (req, res) => {
       return res.status(400).json({ success: false, message: "ID de proyecto inválido" });
     }
 
-    const project = await Project.findOneAndDelete({ _id: id, ownerId: req.user.userId });
-
+    // 1. Buscar el proyecto primero para validar propietario
+    const project = await Project.findOne({ _id: id, ownerId: req.user.userId });
     if (!project) {
       return res.status(404).json({ success: false, message: "Proyecto no encontrado o no autorizado" });
     }
 
-    res.json({ success: true, message: "Proyecto eliminado correctamente" });
+    // 2. Eliminar todas las tareas asociadas al proyecto
+    await Task.deleteMany({ projectId: project._id });
+
+    // 3. Eliminar el proyecto
+    await Project.findByIdAndDelete(project._id);
+
+    res.json({ success: true, message: "Proyecto y todas sus tareas eliminadas correctamente" });
   } catch (error) {
     console.error("Error en deleteProject:", error.message);
     res.status(500).json({ success: false, message: "Error al eliminar el proyecto" });

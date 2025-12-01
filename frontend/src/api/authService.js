@@ -38,3 +38,17 @@ export const getProfile = async () => {
   const response = await api.get("/api/auth/profile");
   return response.data;
 };
+
+// Eliminar Cuenta de Usuario
+export const deleteUser = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No se encontró token de autenticación");
+
+  const res = await api.delete("/api/auth/delete", {
+    headers: {
+      Authorization: `Bearer ${token}`, // enviamos el token
+    },
+  });
+
+  return res.data;
+};
