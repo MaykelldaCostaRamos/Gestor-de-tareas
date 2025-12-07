@@ -10,7 +10,9 @@ export default function Navbar() {
         transition={{ duration: 0.6 }}
         className="text-2xl font-bold text-blue-600"
       >
-        Nou<span className="font-light">team</span>
+        <Link to={"/"}>
+          Nou<span className="font-light">team</span>
+        </Link>        
       </motion.h1>
       <motion.div
         initial={{ opacity: 0, y: -20 }}

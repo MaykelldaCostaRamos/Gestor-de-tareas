@@ -77,7 +77,9 @@ export default function Register() {
           transition={{ duration: 0.6 }}
           className="text-2xl font-bold text-blue-600 text-center"
         >
-          Nou<span className="font-light">team</span>
+          <Link to={"/"}>
+            Nou<span className="font-light">team</span>
+          </Link>
         </motion.h1>   
       </div>
 

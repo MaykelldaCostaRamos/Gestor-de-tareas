@@ -14,7 +14,7 @@ export default function SidebarDesktop() {
   const navLinks = [
     { to: "/dashboard", label: "Dashboard" },
     { to: "/project", label: "Proyectos" },
-    { to: "/settings", label: "⚙️ Configuración" },
+    { to: "/settings", label: "Configuración" },
   ];
 
   return (
