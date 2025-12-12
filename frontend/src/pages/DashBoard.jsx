@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { PencilSquareIcon, TrashIcon, XMarkIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
-import Calendar from "../components/Calendar";
+import {
+  PencilSquareIcon,
+  TrashIcon,
+  XMarkIcon,
+  PlusCircleIcon,
+} from "@heroicons/react/24/outline";
+
 import { getProjects, deleteProject } from "../api/projectService";
 import useProjectModal from "../hooks/useProjectModal";
 
@@ -10,7 +15,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Usamos el hook para manejar modales y proyectos
   const {
     projects,
     setProjects,
@@ -25,7 +29,6 @@ export default function Dashboard() {
     handleEdit,
   } = useProjectModal();
 
-  // Cargar proyectos desde backend
   const fetchProjects = async () => {
     setLoading(true);
     try {
@@ -43,7 +46,6 @@ export default function Dashboard() {
     fetchProjects();
   }, []);
 
-  // Eliminar proyecto
   const handleEliminarProyecto = async (projectId) => {
     try {
       await deleteProject(projectId);
@@ -79,49 +81,49 @@ export default function Dashboard() {
       {error && <div className="text-red-500 mb-2">{error}</div>}
 
       {/* Lista de proyectos */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="gap-6 grid max-w-[620px] md:grid-cols-3 md:max-w-full">
         {projects.map((project) => (
-          <motion.div
-            key={project._id}
-            whileHover={{ scale: 1.03 }}
-            className="p-5 bg-white/90 backdrop-blur-md shadow-lg rounded-2xl border border-gray-100 transition"
-          >
-            <Link to={`/project/${project._id}`} className="block mb-3">
-              <h3 className="font-bold text-lg text-gray-800">{project.name}</h3>
-              {project.description && (
-                <p className="text-gray-500 mt-1 text-sm">{project.description}</p>
-              )}
-              {project.date && (
-                <p className="text-xs text-gray-400 mt-1">
-                  {new Date(project.date).toLocaleDateString("es-ES", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </p>
-              )}
-            </Link>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => openEditModal(project)}
-                className="p-2 bg-yellow-400 hover:bg-yellow-500 rounded-lg transition"
-              >
-                <PencilSquareIcon className="w-5 h-5 text-white" />
-              </button>
-              <button
-                onClick={() => handleEliminarProyecto(project._id)}
-                className="p-2 bg-red-500 hover:bg-red-600 rounded-lg transition"
-              >
-                <TrashIcon className="w-5 h-5 text-white" />
-              </button>
-            </div>
-          </motion.div>
+          <Link key={project._id} to={`/project/${project._id}`}>
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              className="p-5 bg-white/90 backdrop-blur-md shadow-lg rounded-2xl border border-gray-100 transition cursor-pointer"
+            >
+              {/* Título + botones */}
+              <div className="grid grid-cols-[1fr_auto] items-center mb-3 gap-4">
+                <h3 className="font-bold text-lg text-gray-800 truncate">
+                  {project.name}
+                </h3>
+
+                <div className="flex space-x-2">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      openEditModal(project);
+                    }}
+                    className="p-2 bg-yellow-400 hover:bg-yellow-500 rounded-lg transition"
+                  >
+                    <PencilSquareIcon className="w-5 h-5 text-white" />
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleEliminarProyecto(project._id);
+                    }}
+                    className="p-2 bg-red-500 hover:bg-red-600 rounded-lg transition"
+                  >
+                    <TrashIcon className="w-5 h-5 text-white" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </Link>
         ))}
       </div>
 
-      {/* Modal Crear Proyecto */}
+      {/* MODAL CREAR */}
       <AnimatePresence>
         {showCreateModal && (
           <motion.div
@@ -143,24 +145,19 @@ export default function Dashboard() {
                 <XMarkIcon className="w-6 h-6" />
               </button>
 
-              <h3 className="text-xl font-semibold mb-4 text-gray-800">Nuevo Proyecto</h3>
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                Nuevo Proyecto
+              </h3>
 
               <input
                 type="text"
                 value={formState.name}
-                onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                onChange={(e) => setFormState({ name: e.target.value })}
                 placeholder="Nombre del proyecto"
                 className="w-full px-4 py-2 mb-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
-              <textarea
-                value={formState.description}
-                onChange={(e) => setFormState({ ...formState, description: e.target.value })}
-                placeholder="Descripción del proyecto"
-                className="w-full px-4 py-2 mb-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              />
-              <Calendar value={formState.date} onChange={(date) => setFormState({ ...formState, date })} />
 
-              <div className="flex justify-end mt-5 space-x-2">
+              <div className="flex justify-between mt-5">
                 <button
                   onClick={closeModal}
                   className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
@@ -179,11 +176,11 @@ export default function Dashboard() {
         )}
       </AnimatePresence>
 
-      {/* Modal Editar Proyecto */}
+      {/* MODAL EDITAR */}
       <AnimatePresence>
         {showEditModal && (
           <motion.div
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50"
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 px-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -201,20 +198,16 @@ export default function Dashboard() {
                 <XMarkIcon className="w-6 h-6" />
               </button>
 
-              <h3 className="text-xl font-semibold mb-4 text-gray-800">Editar Proyecto</h3>
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                Editar Proyecto
+              </h3>
 
               <input
                 type="text"
                 value={formState.name}
-                onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                onChange={(e) => setFormState({ name: e.target.value })}
                 className="w-full px-4 py-2 mb-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
-              <textarea
-                value={formState.description}
-                onChange={(e) => setFormState({ ...formState, description: e.target.value })}
-                className="w-full px-4 py-2 mb-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              />
-              <Calendar value={formState.date} onChange={(date) => setFormState({ ...formState, date })} />
 
               <div className="flex justify-end mt-5 space-x-2">
                 <button

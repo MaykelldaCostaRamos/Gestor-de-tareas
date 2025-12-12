@@ -16,7 +16,7 @@ export default function Layout() {
   };
 
   return (
-    <div className="relative min-h-screen flex bg-gray-300">
+    <div className="relative min-h-screen flex bg-black">
       <SidebarDesktop />
       <SidebarMobile open={open} setOpen={setOpen} />
 

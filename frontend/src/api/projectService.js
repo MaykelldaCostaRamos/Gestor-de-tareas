@@ -16,13 +16,21 @@ export const getProject = async (projectId) => {
 
 // Crear nuevo proyecto
 export const createProject = async (name, description, date) => {
-  const response = await api.post("/api/project", { name, description, date});
+  const response = await api.post("/api/project", {
+    name,
+    description,
+    date,
+  });
   return response.data;
 };
 
 // Editar proyecto
 export const updateProject = async (projectId, name, description, date) => {
-  const response = await api.put(`/api/project/${projectId}`, { name, description, date });
+  const response = await api.put(`/api/project/${projectId}`, {
+    name,
+    description,
+    date,
+  });
   return response.data.project;
 };
 
@@ -36,7 +44,10 @@ export const deleteProject = async (projectId) => {
 
 // Crear nueva tarea en un proyecto
 export const createTask = async (projectId, title, description = "") => {
-  const response = await api.post(`/api/task/${projectId}`, { title, description });
+  const response = await api.post(`/api/task/${projectId}`, {
+    title,
+    description,
+  });
   return response.data.data;
 };
 

@@ -1,21 +1,16 @@
-
 import { useState } from "react";
 import { createProject, updateProject } from "../api/projectService";
 
 export default function useProjectModal(initialProjects = []) {
   const [projects, setProjects] = useState(initialProjects);
 
-  // Formularios
+  // Formulario (solo nombre)
   const [formState, setFormState] = useState({
     name: "",
-    description: "",
-    date: null,
   });
 
-  // Modal Crear
+  // Modales
   const [showCreateModal, setShowCreateModal] = useState(false);
-
-  // Modal Editar
   const [showEditModal, setShowEditModal] = useState(false);
   const [editProject, setEditProject] = useState(null);
 
@@ -24,7 +19,7 @@ export default function useProjectModal(initialProjects = []) {
 
   // Abrir modal crear
   const openCreateModal = () => {
-    setFormState({ name: "", description: "", date: null });
+    setFormState({ name: "" });
     setShowCreateModal(true);
   };
 
@@ -33,18 +28,16 @@ export default function useProjectModal(initialProjects = []) {
     setEditProject(project);
     setFormState({
       name: project.name,
-      description: project.description || "",
-      date: project.date || null,
     });
     setShowEditModal(true);
   };
 
-  // Cerrar cualquier modal
+  // Cerrar modales
   const closeModal = () => {
     setShowCreateModal(false);
     setShowEditModal(false);
     setEditProject(null);
-    setFormState({ name: "", description: "", date: null });
+    setFormState({ name: "" });
     setError(null);
   };
 
@@ -53,11 +46,7 @@ export default function useProjectModal(initialProjects = []) {
     if (!formState.name.trim()) return;
 
     try {
-      const { project } = await createProject(
-        formState.name.trim(),
-        formState.description.trim(),
-        formState.date
-      );
+      const { project } = await createProject(formState.name.trim());
       setProjects((prev) => [...prev, project]);
       closeModal();
     } catch (err) {
@@ -73,13 +62,13 @@ export default function useProjectModal(initialProjects = []) {
     try {
       const updated = await updateProject(
         editProject._id,
-        formState.name.trim(),
-        formState.description.trim(),
-        formState.date
+        formState.name.trim()
       );
+
       setProjects((prev) =>
         prev.map((p) => (p._id === editProject._id ? updated : p))
       );
+
       closeModal();
     } catch (err) {
       console.error(err);
