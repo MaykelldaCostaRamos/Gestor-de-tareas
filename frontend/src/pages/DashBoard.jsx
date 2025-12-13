@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   PencilSquareIcon,
   TrashIcon,
@@ -14,6 +14,7 @@ import useProjectModal from "../hooks/useProjectModal";
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const {
     projects,
@@ -66,9 +67,9 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-10 p-6">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
+    <div className="flex flex-col flex-1 p-6 space-y-10 overflow-auto">
+      {/* HEADER */}
+      <div className="flex justify-between items-center">
         <button
           onClick={openCreateModal}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl font-semibold transition"
@@ -78,52 +79,64 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {error && <div className="text-red-500 mb-2">{error}</div>}
+      {error && <div className="text-red-500">{error}</div>}
 
-      {/* Lista de proyectos */}
-      <div className="gap-6 grid max-w-[620px] md:grid-cols-3 md:max-w-full">
+      {/* GRID DE PROYECTOS */}
+      <div className="grid gap-6 max-w-[620px] md:grid-cols-3 md:max-w-full">
         {projects.map((project) => (
-          <Link key={project._id} to={`/project/${project._id}`}>
-            <motion.div
-              whileHover={{ scale: 1.03 }}
-              className="p-5 bg-white/90 backdrop-blur-md shadow-lg rounded-2xl border border-gray-100 transition cursor-pointer"
-            >
-              {/* Título + botones */}
-              <div className="grid grid-cols-[1fr_auto] items-center mb-3 gap-4">
-                <h3 className="font-bold text-lg text-gray-800 truncate">
-                  {project.name}
-                </h3>
+          <motion.div
+            key={project._id}
+            whileHover={{ scale: 1.03 }}
+            onClick={() => navigate(`/project/${project._id}`)}
+            className="relative p-5 bg-white/90 backdrop-blur-md shadow-lg rounded-2xl border border-gray-100 transition cursor-pointer"
+          >
+            {/* TÍTULO */}
+            <h3 className="font-bold text-lg text-gray-800 truncate mb-4">
+              {project.name}
+            </h3>
 
-                <div className="flex space-x-2">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      openEditModal(project);
-                    }}
-                    className="p-2 bg-yellow-400 hover:bg-yellow-500 rounded-lg transition"
-                  >
-                    <PencilSquareIcon className="w-5 h-5 text-white" />
-                  </button>
+            {/* ACCIONES */}
+            <div className="flex justify-between items-center">
+              {/* Acción rápida tipo Trello */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/project/${project._id}?newTask=true`);
+                }}
+                className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 font-medium"
+              >
+                <PlusCircleIcon className="w-4 h-4" />
+                Tarea
+              </button>
 
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleEliminarProyecto(project._id);
-                    }}
-                    className="p-2 bg-red-500 hover:bg-red-600 rounded-lg transition"
-                  >
-                    <TrashIcon className="w-5 h-5 text-white" />
-                  </button>
-                </div>
+              {/* Editar / Eliminar */}
+              <div className="flex gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openEditModal(project);
+                  }}
+                  className="p-2 bg-yellow-400 hover:bg-yellow-500 rounded-lg transition"
+                >
+                  <PencilSquareIcon className="w-5 h-5 text-white" />
+                </button>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEliminarProyecto(project._id);
+                  }}
+                  className="p-2 bg-red-500 hover:bg-red-600 rounded-lg transition"
+                >
+                  <TrashIcon className="w-5 h-5 text-white" />
+                </button>
               </div>
-            </motion.div>
-          </Link>
+            </div>
+          </motion.div>
         ))}
       </div>
 
-      {/* MODAL CREAR */}
+      {/* ===== MODAL CREAR PROYECTO ===== */}
       <AnimatePresence>
         {showCreateModal && (
           <motion.div
@@ -154,10 +167,10 @@ export default function Dashboard() {
                 value={formState.name}
                 onChange={(e) => setFormState({ name: e.target.value })}
                 placeholder="Nombre del proyecto"
-                className="w-full px-4 py-2 mb-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 mb-4 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
 
-              <div className="flex justify-between mt-5">
+              <div className="flex justify-between">
                 <button
                   onClick={closeModal}
                   className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
@@ -176,7 +189,7 @@ export default function Dashboard() {
         )}
       </AnimatePresence>
 
-      {/* MODAL EDITAR */}
+      {/* ===== MODAL EDITAR PROYECTO ===== */}
       <AnimatePresence>
         {showEditModal && (
           <motion.div
@@ -206,10 +219,10 @@ export default function Dashboard() {
                 type="text"
                 value={formState.name}
                 onChange={(e) => setFormState({ name: e.target.value })}
-                className="w-full px-4 py-2 mb-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 mb-4 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
 
-              <div className="flex justify-end mt-5 space-x-2">
+              <div className="flex justify-end gap-2">
                 <button
                   onClick={closeModal}
                   className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"

@@ -135,7 +135,7 @@ export default function Project() {
           </button>
         )}
 
-        {/* Selector de proyecto 
+        {/* Selector de proyecto*/} 
         <div>
           {proyectos.length > 0 && (
             <select
@@ -151,7 +151,7 @@ export default function Project() {
               ))}
             </select>
           )}
-        </div>*/}
+        </div>
       </div>
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
