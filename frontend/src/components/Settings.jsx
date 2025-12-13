@@ -3,7 +3,7 @@ import { deleteUser } from "../api/authService";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useConfirmModal } from "../hooks/useConfirmModal";
-import ConfirmModal from "./common/confirmModal";
+import ConfirmModal from "../components/common/ConfirmModal";
 
 export default function Settings() {
   const { modal, openConfirm, closeConfirm } = useConfirmModal();
