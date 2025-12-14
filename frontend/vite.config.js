@@ -6,8 +6,9 @@ export default defineConfig({
   plugins: [react(), tailwindcss({
     content: [
         './index.html',
-        './src/**/*.{js,jsx,ts,tsx}'
-      ]
+        './src/**/*.{js,jsx,ts,tsx}',
+        
+      ],
   })],
   server: {
     proxy: {

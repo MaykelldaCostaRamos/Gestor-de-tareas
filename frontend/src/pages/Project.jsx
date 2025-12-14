@@ -122,10 +122,14 @@ export default function Project() {
 
   return (
     <div className="flex flex-col flex-1 p-6 space-y-10 overflow-auto">
+      <div className="flex text-3xl font-light">
+        <h1 className="text-white">{proyectoSeleccionado?.name}</h1>
+      </div>
+
       {/* Botón y selector */}
       <div className="md:flex gap-4 justify-between items-center">
         {/* Botón Nueva Tarea – solo si hay proyecto seleccionado */}
-        {proyectoSeleccionado && (
+        {proyectoSeleccionado && (      
           <button
             onClick={openCreateModal}
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl font-semibold transition"
@@ -135,7 +139,7 @@ export default function Project() {
           </button>
         )}
 
-        {/* Selector de proyecto*/} 
+        {/* Selector de proyecto
         <div>
           {proyectos.length > 0 && (
             <select
@@ -151,7 +155,7 @@ export default function Project() {
               ))}
             </select>
           )}
-        </div>
+        </div>*/} 
       </div>
 
       {error && <div className="text-red-500 mb-4">{error}</div>}

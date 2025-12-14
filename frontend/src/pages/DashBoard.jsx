@@ -59,7 +59,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center flex-1 min-h-[60vh]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         <p className="ml-4 text-lg text-gray-600">Cargando proyectos...</p>
       </div>
@@ -67,7 +67,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col flex-1 p-6 space-y-10 overflow-auto">
+    <div className="flex flex-col flex-1 p-6 space-y-10">
       {/* HEADER */}
       <div className="flex justify-between items-center">
         <button
@@ -82,16 +82,16 @@ export default function Dashboard() {
       {error && <div className="text-red-500">{error}</div>}
 
       {/* GRID DE PROYECTOS */}
-      <div className="grid gap-6 max-w-[620px] md:grid-cols-3 md:max-w-full">
+      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
         {projects.map((project) => (
           <motion.div
             key={project._id}
             whileHover={{ scale: 1.03 }}
             onClick={() => navigate(`/project/${project._id}`)}
-            className="relative p-5 bg-white/90 backdrop-blur-md shadow-lg rounded-2xl border border-gray-100 transition cursor-pointer"
+            className="relative p-6 bg-white/90 backdrop-blur-md shadow-lg rounded-2xl border border-gray-100 transition cursor-pointer"
           >
             {/* TÍTULO */}
-            <h3 className="font-bold text-lg text-gray-800 truncate mb-4">
+            <h3 className="font-bold text-lg text-gray-800 mb-4">
               {project.name}
             </h3>
 
